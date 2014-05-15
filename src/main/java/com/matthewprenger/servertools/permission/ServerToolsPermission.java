@@ -21,10 +21,7 @@ import com.matthewprenger.servertools.core.ServerTools;
 import com.matthewprenger.servertools.core.command.CommandManager;
 import com.matthewprenger.servertools.permission.command.*;
 import cpw.mods.fml.common.Mod;
-import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import cpw.mods.fml.common.event.FMLServerAboutToStartEvent;
-import cpw.mods.fml.common.event.FMLServerStartedEvent;
-import cpw.mods.fml.common.event.FMLServerStartingEvent;
+import cpw.mods.fml.common.event.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -41,6 +38,14 @@ public class ServerToolsPermission {
     public static final Logger log = LogManager.getLogger(Reference.MOD_ID);
 
     public static EventHandler eventHandler;
+
+    @Mod.EventHandler
+    public void invalidCert(FMLFingerprintViolationEvent event) {
+
+        log.warn("Invalid ServerTools Permission fingerprint detected: {}", event.fingerprints.toString());
+        log.warn("Expected: {}", event.expectedFingerprint);
+        log.warn("Unpredictable results my occur");
+    }
 
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event) {
