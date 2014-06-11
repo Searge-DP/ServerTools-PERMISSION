@@ -172,4 +172,4 @@ task signJar(dependsOn: 'reobf') {
 }
 tasks.build.dependsOn 'signJar'
 
-task release(dependsOn: [build, signJar, publish])
+task release(dependsOn: [build, signJar, publish, curse])
