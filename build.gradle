@@ -5,9 +5,9 @@ def versionMinor = 0
 def versionRev = 1
 def versionBuild = 0
 
-def minecraftVersion = '1.7.2'
-def forgeVersion = '10.12.1.1082'
-def STCoreVersion = '2.0.1.21'
+def minecraftVersion = '1.7.10'
+def forgeVersion = '10.13.0.1152'
+def STCoreVersion = '2.1.0.29'
 
 /* Constantes End */
 
@@ -136,9 +136,10 @@ publishing {
     }
 }
 
-import net.minecraftforge.gradle.tasks.dev.ChangelogTask
-import net.minecraftforge.gradle.delayed.DelayedString
+
 import net.minecraftforge.gradle.delayed.DelayedFile
+import net.minecraftforge.gradle.delayed.DelayedString
+import net.minecraftforge.gradle.tasks.dev.ChangelogTask
 
 task changeLog(type: ChangelogTask) {
     onlyIf {project.hasProperty('jenkins_user')}
