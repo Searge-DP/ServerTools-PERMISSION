@@ -20,6 +20,9 @@ import com.matthewprenger.servertools.core.STVersion;
 import com.matthewprenger.servertools.core.ServerTools;
 import com.matthewprenger.servertools.core.command.CommandManager;
 import com.matthewprenger.servertools.permission.command.*;
+import com.matthewprenger.servertools.permission.config.PermissionConfig;
+import com.matthewprenger.servertools.permission.handlers.EventHandler;
+import com.matthewprenger.servertools.permission.perms.PermissionManager;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.event.*;
 import org.apache.logging.log4j.LogManager;
@@ -65,10 +68,10 @@ public class ServerToolsPermission {
 
         CommandManager.registerSTCommand(new CommandAddPlayer("addplayer"));
         CommandManager.registerSTCommand(new CommandRemovePlayer("removeplayer"));
-        CommandManager.registerSTCommand(new CommandAddGroup("addgroup"));
+        CommandManager.registerSTCommand(new CommandCreateGroup("creategroup"));
         CommandManager.registerSTCommand(new CommandRemoveGroup("removegroup"));
-        CommandManager.registerSTCommand(new CommandAddCommand("addcommand"));
-        CommandManager.registerSTCommand(new CommandRemoveCommand("removecommand"));
+        CommandManager.registerSTCommand(new CommandAddPerm("addperm"));
+        CommandManager.registerSTCommand(new CommandRemovePerm("removeperm"));
         CommandManager.registerSTCommand(new CommandSetGroupColor("setgroupcolor"));
     }
 
@@ -81,10 +84,6 @@ public class ServerToolsPermission {
     @Mod.EventHandler
     public void serverStarted(FMLServerStartedEvent event) {
 
-        GroupManager.init(new File(permissionDir, "groups"));
-
-        if (GroupManager.shouldLoadDefaultGroups()) {
-            GroupManager.loadDefaultGroups();
-        }
+        PermissionManager.init(new File(permissionDir, "groups"));
     }
 }

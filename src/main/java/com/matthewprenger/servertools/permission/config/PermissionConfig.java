@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-package com.matthewprenger.servertools.permission;
+package com.matthewprenger.servertools.permission.config;
 
+import com.matthewprenger.servertools.permission.ServerToolsPermission;
 import net.minecraftforge.common.config.Configuration;
 
 import java.io.File;

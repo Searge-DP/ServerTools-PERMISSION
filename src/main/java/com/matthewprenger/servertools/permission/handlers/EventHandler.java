@@ -14,9 +14,11 @@
  * limitations under the License.
  */
 
-package com.matthewprenger.servertools.permission;
+package com.matthewprenger.servertools.permission.handlers;
 
-import com.matthewprenger.servertools.permission.elements.Group;
+import com.matthewprenger.servertools.permission.Group;
+import com.matthewprenger.servertools.permission.config.PermissionConfig;
+import com.matthewprenger.servertools.permission.perms.PermissionManager;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.PlayerEvent;
@@ -43,7 +45,7 @@ public class EventHandler {
         if (!PermissionConfig.prefixChatGroupName)
             return;
 
-        Collection<Group> groups = GroupManager.getPlayerGroups(event.username);
+        Collection<Group> groups = PermissionManager.getGroups(event.entityPlayer.getPersistentID());
 
         if (groups.isEmpty())
             return;
@@ -68,9 +70,9 @@ public class EventHandler {
     @SubscribeEvent
     public void onPlayerLogin(PlayerEvent.PlayerLoggedInEvent event) {
 
-        if (GroupManager.getPlayerGroups(event.player.getCommandSenderName()).isEmpty()) {
+        if (PermissionManager.getGroups(event.player.getPersistentID()).isEmpty()) {
 
-            GroupManager.assignDefaultGroup(event.player.getCommandSenderName());
+            PermissionManager.assignDefaultGroup(event.player);
             ChatComponentText componentText = new ChatComponentText(String.format("You have been added to the default group %s", PermissionConfig.defaultGroup));
             componentText.getChatStyle().setItalic(true).setColor(EnumChatFormatting.GOLD);
             event.player.addChatMessage(componentText);

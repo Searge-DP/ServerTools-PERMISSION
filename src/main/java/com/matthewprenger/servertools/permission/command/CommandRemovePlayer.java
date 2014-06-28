@@ -16,17 +16,17 @@
 
 package com.matthewprenger.servertools.permission.command;
 
+import com.matthewprenger.servertools.core.command.CommandLevel;
 import com.matthewprenger.servertools.core.command.ServerToolsCommand;
-import com.matthewprenger.servertools.core.util.Util;
-import com.matthewprenger.servertools.permission.GroupManager;
-import com.matthewprenger.servertools.permission.elements.GroupException;
+import com.matthewprenger.servertools.permission.Group;
+import com.matthewprenger.servertools.permission.perms.PermissionManager;
 import net.minecraft.command.ICommandSender;
+import net.minecraft.command.PlayerNotFoundException;
 import net.minecraft.command.WrongUsageException;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.EnumChatFormatting;
 
+import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 public class CommandRemovePlayer extends ServerToolsCommand {
 
@@ -35,8 +35,8 @@ public class CommandRemovePlayer extends ServerToolsCommand {
     }
 
     @Override
-    public int getRequiredPermissionLevel() {
-        return 3;
+    public CommandLevel getCommandLevel() {
+        return CommandLevel.OP;
     }
 
     @Override
@@ -45,7 +45,7 @@ public class CommandRemovePlayer extends ServerToolsCommand {
         if (par2ArrayOfStr.length == 1) {
             return getListOfStringsMatchingLastWord(par2ArrayOfStr, MinecraftServer.getServer().getAllUsernames());
         } else if (par2ArrayOfStr.length == 2) {
-            Set<String> groupKeys = GroupManager.getGroups().keySet();
+            Collection<String> groupKeys = PermissionManager.getGroupNames();
             return getListOfStringsMatchingLastWord(par2ArrayOfStr, groupKeys.toArray(new String[groupKeys.size()]));
         } else {
             return null;
@@ -70,13 +70,14 @@ public class CommandRemovePlayer extends ServerToolsCommand {
         if (args.length != 2)
             throw new WrongUsageException(getCommandUsage(sender));
 
-        try {
-            GroupManager.removeUserFromGroup(args[0], args[1]);
-        } catch (GroupException e) {
-            sender.addChatMessage(Util.getChatComponent(e.toString(), EnumChatFormatting.RED));
-            return;
-        }
+        Group group = PermissionManager.getGroup(args[1]);
 
-        notifyAdmins(sender, String.format("Removed %s from the %s group", args[0], args[1]));
+        if (group == null)
+            throw new PlayerNotFoundException("That group doesn't exist");
+
+        if (!group.removePlayerFromGroup(getPlayer(sender, args[0])))
+            throw new PlayerNotFoundException("That player wasn't a member of that group");
+
+        func_152373_a(sender, this, String.format("Removed %s from the %s group", args[0], args[1]));
     }
 }

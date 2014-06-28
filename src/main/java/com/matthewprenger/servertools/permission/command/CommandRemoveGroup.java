@@ -16,16 +16,15 @@
 
 package com.matthewprenger.servertools.permission.command;
 
+import com.matthewprenger.servertools.core.command.CommandLevel;
 import com.matthewprenger.servertools.core.command.ServerToolsCommand;
-import com.matthewprenger.servertools.core.util.Util;
-import com.matthewprenger.servertools.permission.GroupManager;
-import com.matthewprenger.servertools.permission.elements.GroupException;
+import com.matthewprenger.servertools.permission.perms.PermissionManager;
 import net.minecraft.command.ICommandSender;
+import net.minecraft.command.PlayerNotFoundException;
 import net.minecraft.command.WrongUsageException;
-import net.minecraft.util.EnumChatFormatting;
 
+import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 public class CommandRemoveGroup extends ServerToolsCommand {
 
@@ -34,8 +33,8 @@ public class CommandRemoveGroup extends ServerToolsCommand {
     }
 
     @Override
-    public int getRequiredPermissionLevel() {
-        return 3;
+    public CommandLevel getCommandLevel() {
+        return CommandLevel.OP;
     }
 
     @Override
@@ -46,7 +45,7 @@ public class CommandRemoveGroup extends ServerToolsCommand {
     @Override
     public List addTabCompletionOptions(ICommandSender par1ICommandSender, String[] strings) {
 
-        Set<String> groupKeys = GroupManager.getGroups().keySet();
+        Collection<String> groupKeys = PermissionManager.getGroupNames();
         return getListOfStringsMatchingLastWord(strings, groupKeys.toArray(new String[groupKeys.size()]));
     }
 
@@ -56,13 +55,9 @@ public class CommandRemoveGroup extends ServerToolsCommand {
         if (args.length < 1)
             throw new WrongUsageException(getCommandUsage(sender));
 
-        try {
-            GroupManager.removeGroup(args[0]);
-        } catch (GroupException e) {
-            sender.addChatMessage(Util.getChatComponent(e.toString(), (EnumChatFormatting.RED)));
-            return;
-        }
+        if (!PermissionManager.removeGroup(args[0]))
+            throw new PlayerNotFoundException("That group doesn't exist");
 
-        notifyAdmins(sender, String.format("Deleted group: %s", args[0]));
+        func_152373_a(sender, this, String.format("Deleted group: %s", args[0]));
     }
 }

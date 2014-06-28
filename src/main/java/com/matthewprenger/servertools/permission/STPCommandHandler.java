@@ -16,7 +16,9 @@
 
 package com.matthewprenger.servertools.permission;
 
+import com.matthewprenger.servertools.permission.perms.PermissionManager;
 import net.minecraft.command.*;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.EnumChatFormatting;
@@ -58,7 +60,10 @@ public class STPCommandHandler extends CommandHandler {
                 throw new CommandNotFoundException();
             }
 
-            if (GroupManager.canUseCommand(sender, icommand)) {
+            boolean allowed = (!(sender instanceof EntityPlayer)) ||
+                    PermissionManager.checkPerm(PermissionManager.getPermFromCommand(icommand), ((EntityPlayer) sender).getPersistentID());
+
+            if (allowed) {
 
                 CommandEvent event = new CommandEvent(icommand, sender, args);
                 if (MinecraftForge.EVENT_BUS.post(event)) {
@@ -108,7 +113,7 @@ public class STPCommandHandler extends CommandHandler {
 
                 if (icommand != null) {
                     if (CommandBase.doesStringStartWith(commandName, icommand.getCommandName())) {
-                        if (GroupManager.canUseCommand(sender, icommand)) {
+                        if ((!(sender instanceof EntityPlayer)) || PermissionManager.checkPerm(PermissionManager.getPermFromCommand(icommand), ((EntityPlayer) sender).getPersistentID())) {
                             arraylist.add(icommand.getCommandName());
                         }
                     }
@@ -144,7 +149,7 @@ public class STPCommandHandler extends CommandHandler {
 
             if (icommand != null) {
 
-                if (GroupManager.canUseCommand(sender, icommand)) {
+                if ((!(sender instanceof EntityPlayer)) || PermissionManager.checkPerm(PermissionManager.getPermFromCommand(icommand), ((EntityPlayer) sender).getPersistentID())) {
                     arraylist.add(icommand);
                 }
             }

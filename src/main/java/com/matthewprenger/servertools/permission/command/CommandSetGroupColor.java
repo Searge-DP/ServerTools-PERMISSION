@@ -16,10 +16,11 @@
 
 package com.matthewprenger.servertools.permission.command;
 
+import com.matthewprenger.servertools.core.command.CommandLevel;
 import com.matthewprenger.servertools.core.command.ServerToolsCommand;
 import com.matthewprenger.servertools.core.util.Util;
-import com.matthewprenger.servertools.permission.GroupManager;
-import com.matthewprenger.servertools.permission.elements.GroupException;
+import com.matthewprenger.servertools.permission.Group;
+import com.matthewprenger.servertools.permission.perms.PermissionManager;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.PlayerNotFoundException;
@@ -28,7 +29,6 @@ import net.minecraft.util.EnumChatFormatting;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 public class CommandSetGroupColor extends ServerToolsCommand {
 
@@ -37,8 +37,8 @@ public class CommandSetGroupColor extends ServerToolsCommand {
     }
 
     @Override
-    public int getRequiredPermissionLevel() {
-        return 3;
+    public CommandLevel getCommandLevel() {
+        return CommandLevel.OP;
     }
 
     @Override
@@ -51,7 +51,7 @@ public class CommandSetGroupColor extends ServerToolsCommand {
     public List addTabCompletionOptions(ICommandSender sender, String[] args) {
 
         if (args.length == 1) {
-            Set<String> strings = GroupManager.getGroups().keySet();
+            Collection<String> strings = PermissionManager.getGroupNames();
             return getListOfStringsMatchingLastWord(args, strings.toArray(new String[strings.size()]));
         } else if (args.length == 2) {
             Collection<String> strings = EnumChatFormatting.getValidValues(true, false);
@@ -67,17 +67,15 @@ public class CommandSetGroupColor extends ServerToolsCommand {
         if (args.length != 2)
             throw new WrongUsageException(getCommandUsage(sender));
 
-        if (!GroupManager.getGroups().containsKey(args[0]))
+        Group group = PermissionManager.getGroup(args[0]);
+
+        if (group == null)
             throw new PlayerNotFoundException("That group doesn't exist");
 
         if (EnumChatFormatting.getValueByName(args[1]) == null)
-            throw new CommandException("That color doesn't exist");
+            throw new CommandException("That isn't a valid color");
 
-        try {
-            GroupManager.setGroupChatColor(args[0], args[1]);
-        } catch (GroupException e) {
-            throw new PlayerNotFoundException("That group doesn't exist");
-        }
+        group.setChatColor(args[1]);
 
         sender.addChatMessage(Util.getChatComponent(String.format("Set %s color to %s", args[0], args[1]), EnumChatFormatting.GRAY));
     }

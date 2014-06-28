@@ -16,28 +16,28 @@
 
 package com.matthewprenger.servertools.permission.command;
 
+import com.matthewprenger.servertools.core.command.CommandLevel;
 import com.matthewprenger.servertools.core.command.ServerToolsCommand;
-import com.matthewprenger.servertools.core.util.Util;
-import com.matthewprenger.servertools.permission.GroupManager;
-import com.matthewprenger.servertools.permission.elements.GroupException;
+import com.matthewprenger.servertools.permission.Group;
+import com.matthewprenger.servertools.permission.perms.PermissionManager;
 import net.minecraft.command.CommandHandler;
 import net.minecraft.command.ICommandSender;
+import net.minecraft.command.PlayerNotFoundException;
 import net.minecraft.command.WrongUsageException;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.EnumChatFormatting;
 
+import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
-public class CommandRemoveCommand extends ServerToolsCommand {
+public class CommandRemovePerm extends ServerToolsCommand {
 
-    public CommandRemoveCommand(String defaultName) {
+    public CommandRemovePerm(String defaultName) {
         super(defaultName);
     }
 
     @Override
-    public int getRequiredPermissionLevel() {
-        return 3;
+    public CommandLevel getCommandLevel() {
+        return CommandLevel.OP;
     }
 
     @Override
@@ -47,7 +47,7 @@ public class CommandRemoveCommand extends ServerToolsCommand {
             CommandHandler ch = (CommandHandler) MinecraftServer.getServer().getCommandManager();
             return ch.getPossibleCommands(sender, strings[0]);
         } else if (strings.length == 2) {
-            Set<String> groupKeys = GroupManager.getGroups().keySet();
+            Collection<String> groupKeys = PermissionManager.getGroupNames();
             return getListOfStringsMatchingLastWord(strings, groupKeys.toArray(new String[groupKeys.size()]));
         } else
             return null;
@@ -66,13 +66,14 @@ public class CommandRemoveCommand extends ServerToolsCommand {
         if (strings.length != 2)
             throw new WrongUsageException(getCommandUsage(sender));
 
-        try {
-            GroupManager.removeAllowedCommand(strings[0], strings[1]);
-        } catch (GroupException e) {
-            sender.addChatMessage(Util.getChatComponent(e.toString(), EnumChatFormatting.RED));
-            return;
-        }
+        Group group = PermissionManager.getGroup(strings[1]);
 
-        notifyAdmins(sender, String.format("Removed command %s from %s", strings[0], strings[1]));
+        if (group == null)
+            throw new PlayerNotFoundException("That group doesn't exist");
+
+        if (group.removePerm(strings[0]))
+            func_152373_a(sender, this, String.format("Removed command %s from %s", strings[0], strings[1]));
+        else
+            throw new PlayerNotFoundException("That group didn't have that perm");
     }
 }
