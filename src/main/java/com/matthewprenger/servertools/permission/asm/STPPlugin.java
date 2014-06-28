@@ -21,9 +21,7 @@ import cpw.mods.fml.relauncher.IFMLLoadingPlugin;
 
 import java.util.Map;
 
-@IFMLLoadingPlugin.MCVersion("1.7.2")
-@IFMLLoadingPlugin.Name("STPPlugin")
-@IFMLLoadingPlugin.DependsOn("STPlugin")
+@IFMLLoadingPlugin.MCVersion("1.7.10")
 @IFMLLoadingPlugin.TransformerExclusions({"com.matthewprenger.servertools.permission.asm"})
 public class STPPlugin implements IFMLLoadingPlugin, IFMLCallHook {
 
