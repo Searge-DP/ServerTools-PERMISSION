@@ -34,6 +34,9 @@ public class STPClassTransformer implements IClassTransformer {
 
     private static final Logger log = LogManager.getLogger();
 
+    private static final FMLDeobfuscatingRemapper remapper = FMLDeobfuscatingRemapper.INSTANCE;
+    private static final Set<PatchNote> patches = new HashSet<>();
+
     static {
         PatchNote chPatch = new PatchNote("net.minecraft.command.CommandHandler", "com.matthewprenger.servertools.permission.STPCommandHandler");
         chPatch.addMethodToPatch(new MethodNote("executeCommand", "func_71556_a", "(Lnet/minecraft/command/ICommandSender;Ljava/lang/String;)I"));
@@ -42,8 +45,6 @@ public class STPClassTransformer implements IClassTransformer {
         addPatch(chPatch);
     }
 
-    private static final FMLDeobfuscatingRemapper remapper = FMLDeobfuscatingRemapper.INSTANCE;
-    private static final Set<PatchNote> patches = new HashSet<>();
 
     @Override
     public byte[] transform(String name, String transformedName, byte[] bytes) {

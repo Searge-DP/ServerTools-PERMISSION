@@ -101,7 +101,12 @@ public class Group implements IGroup {
 
     public boolean hasPerm(String perm) {
 
-        return perms.contains(perm) || PermissionManager.getGroup(parentGroup).hasPerm(perm);
+        Group parent = PermissionManager.getGroup(parentGroup);
+
+        if (parent == null)
+            return perms.contains(perm);
+        else
+            return perms.contains(perm) || parent.perms.contains(perm);
     }
 
     public Collection<String> getPerms() {
