@@ -1,8 +1,8 @@
 package net.minecraftforge.permissions.api.context;
 
-import net.minecraft.block.Block;
-
 import java.util.List;
+
+import net.minecraft.block.Block;
 
 /**
  * This is a marker context for all other Context classes.

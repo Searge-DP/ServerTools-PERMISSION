@@ -36,7 +36,11 @@ public class ServerToolsPermission {
     @Mod.Instance
     public static ServerToolsPermission instance;
 
-    public static File permissionDir;
+    public static File permissionDir = new File(ServerTools.serverToolsDir, "permission");
+
+    static {
+        permissionDir.mkdirs();
+    }
 
     public static final Logger log = LogManager.getLogger(Reference.MOD_ID);
 
@@ -55,10 +59,6 @@ public class ServerToolsPermission {
 
         STVersion.checkVersion("@MIN_CORE@");
 
-        permissionDir = new File(ServerTools.serverToolsDir, "permission");
-        if (permissionDir.mkdirs())
-            ServerToolsPermission.log.trace("Creating Permission Directory at: " + permissionDir.getAbsolutePath());
-
         /* Initialize the Permission Configuration */
         PermissionConfig.init(new File(permissionDir, "permission.cfg"));
     }
@@ -67,7 +67,9 @@ public class ServerToolsPermission {
     public void serverAboutToStart(FMLServerAboutToStartEvent event) {
 
         CommandManager.registerSTCommand(new CommandAddPlayer("addplayer"));
+        CommandManager.registerSTCommand(new CommandAddUUID("adduuid"));
         CommandManager.registerSTCommand(new CommandRemovePlayer("removeplayer"));
+        CommandManager.registerSTCommand(new CommandRemoveUUID("removeuuid"));
         CommandManager.registerSTCommand(new CommandCreateGroup("creategroup"));
         CommandManager.registerSTCommand(new CommandRemoveGroup("removegroup"));
         CommandManager.registerSTCommand(new CommandAddPerm("addperm"));

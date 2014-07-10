@@ -16,17 +16,22 @@
 
 package com.matthewprenger.servertools.permission.command;
 
+import com.google.common.base.Strings;
 import com.matthewprenger.servertools.core.command.CommandLevel;
 import com.matthewprenger.servertools.core.command.ServerToolsCommand;
+import com.matthewprenger.servertools.core.util.AccountUtils;
 import com.matthewprenger.servertools.permission.Group;
+import com.matthewprenger.servertools.permission.ServerToolsPermission;
 import com.matthewprenger.servertools.permission.perms.PermissionManager;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.PlayerNotFoundException;
 import net.minecraft.command.WrongUsageException;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.UUID;
 
 public class CommandRemovePlayer extends ServerToolsCommand {
 
@@ -75,9 +80,23 @@ public class CommandRemovePlayer extends ServerToolsCommand {
         if (group == null)
             throw new PlayerNotFoundException("That group doesn't exist");
 
-        if (!group.removePlayerFromGroup(getPlayer(sender, args[0])))
+        EntityPlayerMP player = MinecraftServer.getServer().getConfigurationManager().func_152612_a(args[0]);
+        UUID targetUUID;
+        if (player == null) {
+            String uuid = AccountUtils.getUUID(args[0]);
+            if (Strings.isNullOrEmpty(uuid)) {
+                throw new PlayerNotFoundException("Could not retrieve UUID for that player");
+            }
+            targetUUID = UUID.fromString(uuid);
+            ServerToolsPermission.log.info("Removed {} with UUID {} from the {} group", args[0], uuid, group.getName());
+        } else {
+            targetUUID = player.getPersistentID();
+        }
+
+        if (!group.removePlayer(targetUUID))
             throw new PlayerNotFoundException("That player wasn't a member of that group");
 
+        ServerToolsPermission.log.info("Removed {} with UUID {} from the {} group", args[0], targetUUID, group.getName());
         func_152373_a(sender, this, String.format("Removed %s from the %s group", args[0], args[1]));
     }
 }

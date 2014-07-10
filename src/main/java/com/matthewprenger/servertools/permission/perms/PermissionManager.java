@@ -57,6 +57,12 @@ public class PermissionManager {
         return true;
     }
 
+    public static void putGroup(Group group) {
+
+        groupMap.put(group.getName(), group);
+        saveGroup(group.getName());
+    }
+
     public static boolean removeGroup(String name) {
 
         if (name.equals(PermissionConfig.defaultGroup))
@@ -128,7 +134,6 @@ public class PermissionManager {
             FileUtils.writeStringToFile(gson.toJson(group), groupFile);
         } catch (IOException e) {
             ServerToolsPermission.log.warn("Failed to save group: " + group.groupName, e);
-            e.printStackTrace();
         }
     }
 
@@ -218,7 +223,7 @@ public class PermissionManager {
             EntityPlayer entityplayer = (EntityPlayer) aPlayerEntityList;
 
             if (MinecraftServer.getServer().getConfigurationManager().func_152596_g(entityplayer.getGameProfile())) {
-                adminGroup.addPlayerToGroup(entityplayer);
+                adminGroup.addPlayer(entityplayer.getPersistentID());
             }
         }
     }
@@ -229,7 +234,7 @@ public class PermissionManager {
 
         if (defaultGroup == null) return;
 
-        defaultGroup.addPlayerToGroup(player);
+        defaultGroup.addPlayer(player.getPersistentID());
     }
 
     private static void refreshPlayerDisplayName(String username) {

@@ -16,9 +16,9 @@
 
 package com.matthewprenger.servertools.permission;
 
+import com.google.common.collect.ImmutableSet;
 import com.matthewprenger.servertools.permission.perms.PermissionManager;
 import gnu.trove.set.hash.THashSet;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.permissions.api.IGroup;
 
 import java.util.Collection;
@@ -50,16 +50,16 @@ public class Group implements IGroup {
     }
 
     @Override
-    public void addPlayerToGroup(EntityPlayer player) {
+    public void addPlayer(UUID uuid) {
 
-        members.add(player.getPersistentID());
+        members.add(uuid);
         PermissionManager.saveGroup(groupName);
     }
 
     @Override
-    public boolean removePlayerFromGroup(EntityPlayer player) {
+    public boolean removePlayer(UUID uuid) {
 
-        if ( members.remove(player.getPersistentID())) {
+        if (members.remove(uuid)) {
             PermissionManager.saveGroup(groupName);
             return true;
         }
@@ -69,15 +69,10 @@ public class Group implements IGroup {
 
     @Override
     public Collection<UUID> getAllPlayers() {
-        return members;
+        return ImmutableSet.copyOf(members);
     }
 
     @Override
-    public boolean isPlayerInGroup(EntityPlayer player) {
-
-        return members.contains(player.getPersistentID());
-    }
-
     public boolean isMember(UUID uuid) {
 
         return members.contains(uuid);
@@ -111,7 +106,7 @@ public class Group implements IGroup {
 
     public Collection<String> getPerms() {
 
-        return perms;
+        return ImmutableSet.copyOf(perms);
     }
 
     @Override
@@ -120,10 +115,11 @@ public class Group implements IGroup {
     }
 
     @Override
-    public void setParent(IGroup parent) {
+    public Group setParent(IGroup parent) {
 
         this.parentGroup = parent.getName();
         PermissionManager.saveGroup(groupName);
+        return this;
     }
 
     @Override

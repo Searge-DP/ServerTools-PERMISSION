@@ -42,8 +42,7 @@ public class PermissionConfig {
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
-            ServerToolsPermission.log.fatal("Failed to load permission configuration");
+            ServerToolsPermission.log.fatal("Failed to load permission configuration", e);
         }
     }
 }

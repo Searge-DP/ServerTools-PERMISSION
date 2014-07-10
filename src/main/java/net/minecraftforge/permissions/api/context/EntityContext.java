@@ -1,10 +1,10 @@
 package net.minecraftforge.permissions.api.context;
 
+import java.util.UUID;
+
 import net.minecraft.entity.Entity;
 import net.minecraftforge.permissions.api.context.IContext.ILocationContext;
 import net.minecraftforge.permissions.api.context.IContext.IRotationContext;
-
-import java.util.UUID;
 
 public class EntityContext implements ILocationContext, IRotationContext
 {
