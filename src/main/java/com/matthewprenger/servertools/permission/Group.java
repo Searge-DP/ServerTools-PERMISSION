@@ -19,13 +19,12 @@ package com.matthewprenger.servertools.permission;
 import com.google.common.collect.ImmutableSet;
 import com.matthewprenger.servertools.permission.perms.PermissionManager;
 import gnu.trove.set.hash.THashSet;
-import net.minecraftforge.permissions.api.IGroup;
 
 import java.util.Collection;
 import java.util.Set;
 import java.util.UUID;
 
-public class Group implements IGroup {
+public class Group {
 
     public final String groupName;
     private final Set<UUID> members = new THashSet<>();
@@ -49,14 +48,12 @@ public class Group implements IGroup {
         PermissionManager.saveGroup(groupName);
     }
 
-    @Override
     public void addPlayer(UUID uuid) {
 
         members.add(uuid);
         PermissionManager.saveGroup(groupName);
     }
 
-    @Override
     public boolean removePlayer(UUID uuid) {
 
         if (members.remove(uuid)) {
@@ -67,12 +64,10 @@ public class Group implements IGroup {
         return false;
     }
 
-    @Override
     public Collection<UUID> getAllPlayers() {
         return ImmutableSet.copyOf(members);
     }
 
-    @Override
     public boolean isMember(UUID uuid) {
 
         return members.contains(uuid);
@@ -109,26 +104,18 @@ public class Group implements IGroup {
         return ImmutableSet.copyOf(perms);
     }
 
-    @Override
-    public IGroup getParent() {
+    public Group getParent() {
         return PermissionManager.getGroup(parentGroup);
     }
 
-    @Override
-    public Group setParent(IGroup parent) {
+    public Group setParent(Group parent) {
 
         this.parentGroup = parent.getName();
         PermissionManager.saveGroup(groupName);
         return this;
     }
 
-    @Override
     public String getName() {
         return groupName;
-    }
-
-    @Override
-    public void setName(String name) {
-        // NO OP for now
     }
 }
