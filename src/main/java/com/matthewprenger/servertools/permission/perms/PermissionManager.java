@@ -237,16 +237,17 @@ public class PermissionManager {
         defaultGroup.addPlayer(player.getPersistentID());
     }
 
-    private static void refreshPlayerDisplayName(String username) {
+    @SuppressWarnings("unchecked")
+    public static void refreshPlayerDisplayName(UUID uuid) {
 
-        EntityPlayer player = MinecraftServer.getServer().getConfigurationManager().func_152612_a(username); //getPlayerForUsername
-
-        if (player != null)
-            player.refreshDisplayName();
+        for (EntityPlayer player : (List<EntityPlayer>) MinecraftServer.getServer().getConfigurationManager().playerEntityList) {
+            if (player.getPersistentID().equals(uuid))
+                player.refreshDisplayName();
+        }
     }
 
     @SuppressWarnings("unchecked")
-    private static void refreshAllPlayerDisplayNames() {
+    public static void refreshAllPlayerDisplayNames() {
 
         for (EntityPlayer player : (List<EntityPlayer>) MinecraftServer.getServer().getConfigurationManager().playerEntityList) {
             player.refreshDisplayName();

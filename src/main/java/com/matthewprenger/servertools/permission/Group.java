@@ -52,12 +52,14 @@ public class Group {
 
         members.add(uuid);
         PermissionManager.saveGroup(groupName);
+        PermissionManager.refreshPlayerDisplayName(uuid);
     }
 
     public boolean removePlayer(UUID uuid) {
 
         if (members.remove(uuid)) {
             PermissionManager.saveGroup(groupName);
+            PermissionManager.refreshPlayerDisplayName(uuid);
             return true;
         }
 
