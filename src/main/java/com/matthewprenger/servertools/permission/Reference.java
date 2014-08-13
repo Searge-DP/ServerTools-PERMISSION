@@ -21,4 +21,5 @@ public class Reference {
     public static final String MOD_ID = "ServerTools|Permission";
     public static final String MOD_NAME = MOD_ID;
     public static final String DEPENDENCIES = "required-after:ServerTools";
+    public static final String MC_VERSION = "1.7.10";
 }

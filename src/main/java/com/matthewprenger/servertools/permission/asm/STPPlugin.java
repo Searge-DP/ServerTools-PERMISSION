@@ -16,18 +16,18 @@
 
 package com.matthewprenger.servertools.permission.asm;
 
+import com.matthewprenger.servertools.permission.Reference;
 import cpw.mods.fml.relauncher.IFMLCallHook;
 import cpw.mods.fml.relauncher.IFMLLoadingPlugin;
 
 import java.util.Map;
 
-@IFMLLoadingPlugin.MCVersion("1.7.10")
+@IFMLLoadingPlugin.MCVersion(Reference.MC_VERSION)
 @IFMLLoadingPlugin.TransformerExclusions({"com.matthewprenger.servertools.permission.asm"})
 public class STPPlugin implements IFMLLoadingPlugin, IFMLCallHook {
 
     @Override
     public Void call() throws Exception {
-
         return null;
     }
 
@@ -38,12 +38,12 @@ public class STPPlugin implements IFMLLoadingPlugin, IFMLCallHook {
 
     @Override
     public String getModContainerClass() {
-        return null;
+        return ModContainer.class.getName();
     }
 
     @Override
     public String getSetupClass() {
-        return null;
+        return this.getClass().getName();
     }
 
     @Override
