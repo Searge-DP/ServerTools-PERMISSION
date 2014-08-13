@@ -76,6 +76,7 @@ public class CommandSetGroupColor extends ServerToolsCommand {
             throw new CommandException("That isn't a valid color");
 
         group.setChatColor(args[1]);
+        PermissionManager.saveGroup(args[1]);
 
         sender.addChatMessage(Util.getChatComponent(String.format("Set %s color to %s", args[0], args[1]), EnumChatFormatting.GRAY));
     }
