@@ -53,7 +53,7 @@ public class EventHandler {
         String prefix = "";
 
         for (Group group : groups) {
-            if (group.groupName.equalsIgnoreCase(PermissionConfig.defaultGroup))
+            if (group.groupName.equalsIgnoreCase(PermissionConfig.defaultGroup) && !PermissionConfig.prefixChatDefaultGroup)
                 continue;
 
             EnumChatFormatting color = EnumChatFormatting.getValueByName(group.getChatColor());
@@ -62,6 +62,9 @@ public class EventHandler {
 
             prefix += color + "[" + group.groupName + "]" + RESET;
         }
+        if (prefix.isEmpty())
+            return;
+
         prefix += " ";
 
         event.displayname = prefix + event.displayname;

@@ -25,6 +25,7 @@ public class PermissionConfig {
 
     public static String defaultGroup;
     public static boolean prefixChatGroupName;
+    public static boolean prefixChatDefaultGroup;
 
     public static void init(File file) {
 
@@ -36,6 +37,7 @@ public class PermissionConfig {
 
             defaultGroup = configuration.get(Configuration.CATEGORY_GENERAL, "Default Group", "Player", "The group players will be added to if they aren't in any groups").getString();
             prefixChatGroupName = configuration.get(Configuration.CATEGORY_GENERAL, "Enable Group Chat Prefix", true, "Prefix players names in chat with their group names").getBoolean(true);
+            prefixChatDefaultGroup = configuration.get(Configuration.CATEGORY_GENERAL, "Enable Default Group Prefix", false, "Also adds the prefix to the default group").getBoolean(false);
 
             if (configuration.hasChanged()) {
                 configuration.save();
