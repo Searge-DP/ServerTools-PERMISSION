@@ -75,6 +75,7 @@ public class ServerToolsPermission {
         CommandManager.registerSTCommand(new CommandAddPerm("addperm"));
         CommandManager.registerSTCommand(new CommandRemovePerm("removeperm"));
         CommandManager.registerSTCommand(new CommandSetGroupColor("setgroupcolor"));
+        CommandManager.registerSTCommand(new CommandSetParent("setparent"));
     }
 
     @Mod.EventHandler
