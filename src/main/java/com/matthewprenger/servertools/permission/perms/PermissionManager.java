@@ -8,12 +8,14 @@ import com.matthewprenger.servertools.core.util.FileUtils;
 import com.matthewprenger.servertools.permission.Group;
 import com.matthewprenger.servertools.permission.ServerToolsPermission;
 import com.matthewprenger.servertools.permission.config.PermissionConfig;
+import com.mojang.authlib.GameProfile;
 import gnu.trove.map.hash.THashMap;
 import gnu.trove.set.hash.THashSet;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommand;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.management.UserListEntry;
 import net.minecraft.util.EnumChatFormatting;
 
 import java.io.*;
@@ -174,6 +176,8 @@ public class PermissionManager {
 
         ServerToolsPermission.log.warn("Loading default groups, you should review the groups and make changes as necessary");
 
+        MinecraftServer server = MinecraftServer.getServer();
+
         String ADMIN = "Admin";
         String MODERATOR = "Moderator";
         String DEFAULT = PermissionConfig.defaultGroup;
@@ -194,7 +198,7 @@ public class PermissionManager {
         adminGroup.setParent(modGroup);
         modGroup.setParent(defaultGroup);
 
-        for (Object obj : MinecraftServer.getServer().getCommandManager().getCommands().values()) {
+        for (Object obj : server.getCommandManager().getCommands().values()) {
 
             if (obj instanceof CommandBase) {
                 CommandBase cmdBase = (CommandBase) obj;
@@ -219,12 +223,10 @@ public class PermissionManager {
             }
         }
 
-        for (Object aPlayerEntityList : MinecraftServer.getServer().getConfigurationManager().playerEntityList) {
-            EntityPlayer entityplayer = (EntityPlayer) aPlayerEntityList;
 
-            if (MinecraftServer.getServer().getConfigurationManager().func_152596_g(entityplayer.getGameProfile())) {
-                adminGroup.addPlayer(entityplayer.getPersistentID());
-            }
+        for (String entry : server.getConfigurationManager().func_152603_m().func_152685_a()) {
+            GameProfile profile = server.getConfigurationManager().func_152603_m().func_152700_a(entry);
+            adminGroup.addPlayer(profile.getId());
         }
     }
 
