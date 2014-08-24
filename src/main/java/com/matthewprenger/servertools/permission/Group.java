@@ -98,7 +98,7 @@ public class Group {
         if (parent == null)
             return perms.contains(perm);
         else
-            return perms.contains(perm) || parent.perms.contains(perm);
+            return perms.contains(perm) || parent.hasPerm(perm);
     }
 
     public Collection<String> getPerms() {
