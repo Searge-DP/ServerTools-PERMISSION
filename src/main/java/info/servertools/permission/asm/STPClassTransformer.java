@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Matthew Prenger
+ * Copyright 2014 ServerTools
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,8 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-package com.matthewprenger.servertools.permission.asm;
+package info.servertools.permission.asm;
 
 import cpw.mods.fml.common.asm.transformers.deobf.FMLDeobfuscatingRemapper;
 import net.minecraft.launchwrapper.IClassTransformer;
@@ -38,7 +37,7 @@ public class STPClassTransformer implements IClassTransformer {
     private static final Set<PatchNote> patches = new HashSet<>();
 
     static {
-        PatchNote chPatch = new PatchNote("net.minecraft.command.CommandHandler", "com.matthewprenger.servertools.permission.STPCommandHandler");
+        PatchNote chPatch = new PatchNote("net.minecraft.command.CommandHandler", "info.servertools.permission.STPCommandHandler");
         chPatch.addMethodToPatch(new MethodNote("executeCommand", "func_71556_a", "(Lnet/minecraft/command/ICommandSender;Ljava/lang/String;)I"));
         chPatch.addMethodToPatch(new MethodNote("getPossibleCommands", "func_71558_b", "(Lnet/minecraft/command/ICommandSender;Ljava/lang/String;)Ljava/util/List;"));
         chPatch.addMethodToPatch(new MethodNote("getPossibleCommands", "func_71557_a", "(Lnet/minecraft/command/ICommandSender;)Ljava/util/List;"));

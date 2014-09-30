@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Matthew Prenger
+ * Copyright 2014 ServerTools
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,16 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-package com.matthewprenger.servertools.permission.command;
+package info.servertools.permission.command;
 
 import com.google.common.base.Strings;
-import com.matthewprenger.servertools.core.command.CommandLevel;
-import com.matthewprenger.servertools.core.command.ServerToolsCommand;
-import com.matthewprenger.servertools.core.util.AccountUtils;
-import com.matthewprenger.servertools.permission.Group;
-import com.matthewprenger.servertools.permission.ServerToolsPermission;
-import com.matthewprenger.servertools.permission.perms.PermissionManager;
+import info.servertools.core.command.CommandLevel;
+import info.servertools.core.command.ServerToolsCommand;
+import info.servertools.core.util.AccountUtils;
+import info.servertools.permission.Group;
+import info.servertools.permission.PermissionManager;
+import info.servertools.permission.ServerToolsPermission;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.PlayerNotFoundException;
 import net.minecraft.command.WrongUsageException;
@@ -33,9 +32,9 @@ import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
-public class CommandAddPlayer extends ServerToolsCommand {
+public class CommandRemovePlayer extends ServerToolsCommand {
 
-    public CommandAddPlayer(String defaultName) {
+    public CommandRemovePlayer(String defaultName) {
         super(defaultName);
     }
 
@@ -80,21 +79,23 @@ public class CommandAddPlayer extends ServerToolsCommand {
         if (group == null)
             throw new PlayerNotFoundException("That group doesn't exist");
 
-        EntityPlayerMP player = MinecraftServer.getServer().getConfigurationManager().func_152612_a(args[0]);
+        EntityPlayerMP player = MinecraftServer.getServer().getConfigurationManager().getPlayerByUsername(args[0]);
         UUID targetUUID;
         if (player == null) {
-            String uuid = AccountUtils.getUUID(args[0].trim());
+            String uuid = AccountUtils.getUUID(args[0]);
             if (Strings.isNullOrEmpty(uuid)) {
                 throw new PlayerNotFoundException("Could not retrieve UUID for that player");
             }
             targetUUID = UUID.fromString(uuid);
+            ServerToolsPermission.log.info("Removed {} with UUID {} from the {} group", args[0], uuid, group.getName());
         } else {
             targetUUID = player.getPersistentID();
         }
 
-        group.addPlayer(targetUUID);
+        if (!group.removePlayer(targetUUID))
+            throw new PlayerNotFoundException("That player wasn't a member of that group");
 
-        ServerToolsPermission.log.info("Added {} with UUID {} to the {} group", args[0], targetUUID, group.getName());
-        func_152373_a(sender, this, String.format("Added %s to the %s group", args[0], args[1]));
+        ServerToolsPermission.log.info("Removed {} with UUID {} from the {} group", args[0], targetUUID, group.getName());
+        notifyOperators(sender, this, String.format("Removed %s from the %s group", args[0], args[1]));
     }
 }

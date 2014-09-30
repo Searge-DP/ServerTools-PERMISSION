@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Matthew Prenger
+ * Copyright 2014 ServerTools
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,18 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package info.servertools.permission;
 
-package com.matthewprenger.servertools.permission;
-
-import com.matthewprenger.servertools.core.STVersion;
-import com.matthewprenger.servertools.core.ServerTools;
-import com.matthewprenger.servertools.core.command.CommandManager;
-import com.matthewprenger.servertools.permission.command.*;
-import com.matthewprenger.servertools.permission.config.PermissionConfig;
-import com.matthewprenger.servertools.permission.handlers.EventHandler;
-import com.matthewprenger.servertools.permission.perms.PermissionManager;
 import cpw.mods.fml.common.Mod;
-import cpw.mods.fml.common.event.*;
+import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.common.event.FMLServerAboutToStartEvent;
+import cpw.mods.fml.common.event.FMLServerStartedEvent;
+import cpw.mods.fml.common.event.FMLServerStartingEvent;
+import info.servertools.core.ServerTools;
+import info.servertools.core.command.CommandManager;
+import info.servertools.permission.command.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -36,7 +34,7 @@ public class ServerToolsPermission {
     @Mod.Instance
     public static ServerToolsPermission instance;
 
-    public static File permissionDir = new File(ServerTools.serverToolsDir, "permission");
+    public static final File permissionDir = new File(ServerTools.serverToolsDir, "permission");
 
     static {
         permissionDir.mkdirs();
@@ -47,19 +45,7 @@ public class ServerToolsPermission {
     public static EventHandler eventHandler;
 
     @Mod.EventHandler
-    public void invalidCert(FMLFingerprintViolationEvent event) {
-
-        log.warn("Invalid ServerTools Permission fingerprint detected: {}", event.fingerprints.toString());
-        log.warn("Expected: {}", event.expectedFingerprint);
-        log.warn("Unpredictable results my occur");
-    }
-
-    @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event) {
-
-        STVersion.checkVersion("@MIN_CORE@");
-
-        /* Initialize the Permission Configuration */
         PermissionConfig.init(new File(permissionDir, "permission.cfg"));
     }
 
@@ -80,13 +66,11 @@ public class ServerToolsPermission {
 
     @Mod.EventHandler
     public void serverStarting(FMLServerStartingEvent event) {
-
         if (eventHandler == null) eventHandler = new EventHandler();
     }
 
     @Mod.EventHandler
     public void serverStarted(FMLServerStartedEvent event) {
-
         PermissionManager.init(new File(permissionDir, "groups"));
     }
 }

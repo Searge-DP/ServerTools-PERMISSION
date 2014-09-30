@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Matthew Prenger
+ * Copyright 2014 ServerTools
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,12 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package info.servertools.permission;
 
-package com.matthewprenger.servertools.permission.handlers;
-
-import com.matthewprenger.servertools.permission.Group;
-import com.matthewprenger.servertools.permission.config.PermissionConfig;
-import com.matthewprenger.servertools.permission.perms.PermissionManager;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.PlayerEvent;
@@ -34,48 +30,40 @@ import static net.minecraft.util.EnumChatFormatting.WHITE;
 public class EventHandler {
 
     public EventHandler() {
-
         FMLCommonHandler.instance().bus().register(this);
         MinecraftForge.EVENT_BUS.register(this);
     }
 
     @SubscribeEvent
     public void nameFormat(net.minecraftforge.event.entity.player.PlayerEvent.NameFormat event) {
-
-        if (!PermissionConfig.prefixChatGroupName)
-            return;
+        if (!PermissionConfig.prefixChatGroupName) return;
 
         Collection<Group> groups = PermissionManager.getGroups(event.entityPlayer.getPersistentID());
+        if (groups.isEmpty()) return;
 
-        if (groups.isEmpty())
-            return;
-
-        String prefix = "";
+        StringBuilder sb = new StringBuilder();
 
         for (Group group : groups) {
             if (group.groupName.equalsIgnoreCase(PermissionConfig.defaultGroup) && !PermissionConfig.prefixChatDefaultGroup)
                 continue;
 
             EnumChatFormatting color = EnumChatFormatting.getValueByName(group.getChatColor());
-            if (color == null)
-                color = WHITE;
+            if (color == null) color = WHITE;
 
-            prefix += color + "[" + group.groupName + "]" + RESET;
+            sb.append(color + "[" + group.groupName + "]" + RESET);
         }
-        if (prefix.isEmpty())
+        if (sb.toString().isEmpty())
             return;
 
-        prefix += " ";
+        sb.append(" ");
 
-        event.displayname = prefix + event.displayname;
+        event.displayname = sb.toString() + event.displayname;
     }
 
     @SubscribeEvent
     public void onPlayerLogin(PlayerEvent.PlayerLoggedInEvent event) {
-
         if (PermissionManager.getGroups(event.player.getPersistentID()).isEmpty()) {
-
-            PermissionManager.assignDefaultGroup(event.player);
+            PermissionManager.assignDefaultGroup(event.player.getPersistentID());
             ChatComponentText componentText = new ChatComponentText(String.format("You have been added to the default group %s", PermissionConfig.defaultGroup));
             componentText.getChatStyle().setItalic(true).setColor(EnumChatFormatting.GOLD);
             event.player.addChatMessage(componentText);
