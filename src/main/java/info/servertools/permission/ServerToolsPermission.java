@@ -16,10 +16,7 @@
 package info.servertools.permission;
 
 import cpw.mods.fml.common.Mod;
-import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import cpw.mods.fml.common.event.FMLServerAboutToStartEvent;
-import cpw.mods.fml.common.event.FMLServerStartedEvent;
-import cpw.mods.fml.common.event.FMLServerStartingEvent;
+import cpw.mods.fml.common.event.*;
 import info.servertools.core.ServerTools;
 import info.servertools.core.command.CommandManager;
 import info.servertools.permission.command.*;
@@ -28,7 +25,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 
-@Mod(modid = Reference.MOD_ID, name = Reference.MOD_NAME, dependencies = Reference.DEPENDENCIES, acceptableRemoteVersions = "*")
+@Mod(modid = Reference.MOD_ID, name = Reference.MOD_NAME, dependencies = Reference.DEPENDENCIES, acceptableRemoteVersions = "*", certificateFingerprint = Reference.FINGERPRINT)
 public class ServerToolsPermission {
 
     @Mod.Instance
@@ -43,6 +40,22 @@ public class ServerToolsPermission {
     public static final Logger log = LogManager.getLogger(Reference.MOD_ID);
 
     public static EventHandler eventHandler;
+
+    @Mod.EventHandler
+    public void fingerprintViolation(FMLFingerprintViolationEvent event) {
+        log.warn("****************************************************");
+        log.warn("*    Invalid ST-PERMISSION Fingerprint Detected     *");
+        log.warn("****************************************************");
+        log.warn("* Expected: " + event.expectedFingerprint);
+        log.warn("****************************************************");
+        log.warn("* Received: ");
+        for (String fingerprint : event.fingerprints) {
+            log.warn("*   " + fingerprint);
+        }
+        log.warn("****************************************************");
+        log.warn("*Unpredictable results may occur, please relownload*");
+        log.warn("****************************************************");
+    }
 
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event) {
