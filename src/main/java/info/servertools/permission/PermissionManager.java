@@ -209,10 +209,15 @@ public class PermissionManager {
         final File groupFile = new File(groupDirectory, group.getName() + ".json");
 
         new SaveThread(gson.toJson(group)) {
+
             @Override
             public void run() {
                 synchronized (lock) {
-                    FileUtils.writeStringToFile(data, groupFile);
+                    try {
+                        Files.write(data, groupFile, Reference.CHARSET);
+                    } catch (IOException e) {
+                        ServerToolsPermission.log.error("Failed to save group to disk", e);
+                    }
                 }
             }
         }.start();
