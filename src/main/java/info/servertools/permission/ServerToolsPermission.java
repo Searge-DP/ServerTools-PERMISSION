@@ -70,6 +70,7 @@ public class ServerToolsPermission {
         CommandManager.registerSTCommand(new CommandRemovePlayer("removeplayer"));
         CommandManager.registerSTCommand(new CommandRemoveUUID("removeuuid"));
         CommandManager.registerSTCommand(new CommandCreateGroup("creategroup"));
+        CommandManager.registerSTCommand(new CommandListPerms("listperms"));
         CommandManager.registerSTCommand(new CommandRemoveGroup("removegroup"));
         CommandManager.registerSTCommand(new CommandAddPerm("addperm"));
         CommandManager.registerSTCommand(new CommandRemovePerm("removeperm"));
