@@ -90,7 +90,13 @@ public class Group {
     }
 
     public Collection<String> getPerms() {
-        return ImmutableSet.copyOf(perms);
+        Group parent = getParent();
+
+        if (parent == null) {
+            return ImmutableSet.copyOf(perms);
+        } else {
+            return ImmutableSet.<String>builder().addAll(perms).addAll(parent.perms).build();
+        }
     }
 
     public Group getParent() {
