@@ -17,7 +17,7 @@ package info.servertools.permission.command;
 
 import info.servertools.core.command.CommandLevel;
 import info.servertools.core.command.ServerToolsCommand;
-import info.servertools.core.util.Util;
+import info.servertools.core.util.ChatUtils;
 import info.servertools.permission.Group;
 import info.servertools.permission.PermissionManager;
 import net.minecraft.command.CommandException;
@@ -77,6 +77,6 @@ public class CommandSetGroupColor extends ServerToolsCommand {
         group.setChatColor(args[1]);
         PermissionManager.saveGroup(args[1]);
 
-        sender.addChatMessage(Util.getChatComponent(String.format("Set %s color to %s", args[0], args[1]), EnumChatFormatting.GRAY));
+        sender.addChatMessage(ChatUtils.getChatComponent(String.format("Set %s color to %s", args[0], args[1]), EnumChatFormatting.GRAY));
     }
 }
