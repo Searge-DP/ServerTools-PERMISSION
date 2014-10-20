@@ -23,7 +23,6 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
 import com.mojang.authlib.GameProfile;
 import info.servertools.core.lib.Reference;
-import info.servertools.core.util.FileUtils;
 import info.servertools.core.util.SaveThread;
 import info.servertools.core.util.ServerUtils;
 import net.minecraft.command.CommandBase;
@@ -127,9 +126,11 @@ public class PermissionManager {
      * @return {@code true} if the permission is allowed, {@code false} if not
      */
     public static boolean checkPerm(String node, UUID uuid) {
-        for (Group group : getGroups(uuid)) {
-            if (group.hasPerm(node)) {
-                return true;
+        for (final Group group : getGroups(uuid)) {
+            for (final String perm : group.getPerms()) {
+                if (PermProcessor.matches(perm, node)) {
+                    return true;
+                }
             }
         }
         return false;
@@ -300,6 +301,8 @@ public class PermissionManager {
         adminGroup.setParent(modGroup);
         modGroup.setParent(defaultGroup);
 
+        adminGroup.addPerm(String.valueOf(PermProcessor.WILDCARD)); // Admins get power to do everything
+
         for (Object obj : server.getCommandManager().getCommands().values()) {
 
             if (obj instanceof CommandBase) {
@@ -307,7 +310,6 @@ public class PermissionManager {
                 switch (cmdBase.getRequiredPermissionLevel()) {
                     case 4:
                     case 3:
-                        adminGroup.addPerm(getPermFromCommand(cmdBase));
                         break;
                     case 2:
                         modGroup.addPerm(getPermFromCommand(cmdBase));
