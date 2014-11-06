@@ -15,18 +15,15 @@ task deobfJar(type: Jar, dependsOn: 'classes') {
 
 tasks.build.dependsOn sourceJar, javadocJar, deobfJar
 
-jar {
-    dependsOn 'genGitHash'
-    manifest.mainAttributes(
-            "Built-By": System.getProperty('user.name'),
-            "Created-By": "${System.getProperty('java.vm.version')} + (${System.getProperty('java.vm.vendor')})",
-            "Implementation-Title": project.name,
-            "Implementation-Version": project.version,
-            "Git-Hash": project.ext.gitHash,
-            "FMLCorePlugin": 'info.servertools.permission.asm.STPPlugin',
-            "FMLCorePluginContainsFMLMod": 'true'
-    )
-}
+def manifestAttributes = ["Built-By": System.getProperty('user.name'),
+                          "Created-By": "${System.getProperty('java.vm.version')} + (${System.getProperty('java.vm.vendor')})",
+                          "Implementation-Title": project.name,
+                          "Implementation-Version": project.version,
+                          "Git-Hash": project.ext.gitHash,
+                          "FMLCorePlugin": 'info.servertools.permission.asm.STPPlugin',
+                          "FMLCorePluginContainsFMLMod": 'true']
+
+[jar, deobfJar]*.each { it.manifest.mainAttributes(manifestAttributes) }
 
 tasks.withType(JavaCompile) { task ->
     task.options.encoding = 'UTF-8'
