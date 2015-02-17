@@ -25,7 +25,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 
-@Mod(modid = Reference.MOD_ID, name = Reference.MOD_NAME, dependencies = Reference.DEPENDENCIES, acceptableRemoteVersions = "*", certificateFingerprint = Reference.FINGERPRINT)
+@Mod(modid = Reference.MOD_ID, name = Reference.MOD_NAME, dependencies = Reference.DEPENDENCIES, acceptableRemoteVersions = "*")
 public class ServerToolsPermission {
 
     @Mod.Instance
@@ -40,22 +40,6 @@ public class ServerToolsPermission {
     public static final Logger log = LogManager.getLogger(Reference.MOD_ID);
 
     public static EventHandler eventHandler;
-
-    @Mod.EventHandler
-    public void fingerprintViolation(FMLFingerprintViolationEvent event) {
-        log.warn("****************************************************");
-        log.warn("*    Invalid ST-PERMISSION Fingerprint Detected     *");
-        log.warn("****************************************************");
-        log.warn("* Expected: " + event.expectedFingerprint);
-        log.warn("****************************************************");
-        log.warn("* Received: ");
-        for (String fingerprint : event.fingerprints) {
-            log.warn("*   " + fingerprint);
-        }
-        log.warn("****************************************************");
-        log.warn("*Unpredictable results may occur, please relownload*");
-        log.warn("****************************************************");
-    }
 
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event) {
