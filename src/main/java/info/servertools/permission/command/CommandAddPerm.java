@@ -19,6 +19,7 @@ import info.servertools.core.command.CommandLevel;
 import info.servertools.core.command.ServerToolsCommand;
 import info.servertools.permission.Group;
 import info.servertools.permission.PermissionManager;
+
 import net.minecraft.command.CommandHandler;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.PlayerNotFoundException;
@@ -48,8 +49,9 @@ public class CommandAddPerm extends ServerToolsCommand {
         } else if (strings.length == 2) {
             Collection<String> groupKeys = PermissionManager.getGroupNames();
             return getListOfStringsMatchingLastWord(strings, groupKeys.toArray(new String[groupKeys.size()]));
-        } else
+        } else {
             return null;
+        }
 
     }
 
@@ -62,16 +64,25 @@ public class CommandAddPerm extends ServerToolsCommand {
     @Override
     public void processCommand(ICommandSender sender, String[] args) {
 
-        if (args.length != 2)
+        if (args.length < 2) {
             throw new WrongUsageException(getCommandUsage(sender));
+        }
 
-        Group group = PermissionManager.getGroup(args[1]);
+        String perm = ""; // *Sigh*
+        for (int i = 0; i < args.length - 1; i++) {
+            perm += args[i] + " ";
+        }
+        perm = perm.trim();
 
-        if (group == null)
-            throw new PlayerNotFoundException("That group doesn't exist");
+        String groupName = args[args.length - 1];
+        Group group = PermissionManager.getGroup(groupName);
 
-        group.addPerm(args[0]);
+        if (group == null) {
+            throw new PlayerNotFoundException("Group: " + groupName + " doesn't exist");
+        }
 
-        notifyOperators(sender, this, String.format("Added perm %s to %s", args[0], args[1]));
+        group.addPerm(perm);
+
+        notifyOperators(sender, this, String.format("Added perm: %s To group: %s", perm, groupName));
     }
 }

@@ -19,6 +19,8 @@ import info.servertools.core.command.CommandLevel;
 import info.servertools.core.command.ServerToolsCommand;
 import info.servertools.permission.Group;
 import info.servertools.permission.PermissionManager;
+
+import net.minecraft.command.CommandException;
 import net.minecraft.command.CommandHandler;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.PlayerNotFoundException;
@@ -48,8 +50,7 @@ public class CommandRemovePerm extends ServerToolsCommand {
         } else if (strings.length == 2) {
             Collection<String> groupKeys = PermissionManager.getGroupNames();
             return getListOfStringsMatchingLastWord(strings, groupKeys.toArray(new String[groupKeys.size()]));
-        } else
-            return null;
+        } else { return null; }
 
     }
 
@@ -60,19 +61,29 @@ public class CommandRemovePerm extends ServerToolsCommand {
     }
 
     @Override
-    public void processCommand(ICommandSender sender, String[] strings) {
+    public void processCommand(ICommandSender sender, String[] args) {
 
-        if (strings.length != 2)
+        if (args.length < 2) {
             throw new WrongUsageException(getCommandUsage(sender));
+        }
 
-        Group group = PermissionManager.getGroup(strings[1]);
+        String perm = ""; // *Sigh*
+        for (int i = 0; i < args.length - 1; i++) {
+            perm += args[i] + " ";
+        }
+        perm = perm.trim();
 
-        if (group == null)
-            throw new PlayerNotFoundException("That group doesn't exist");
+        String groupName = args[args.length - 1];
+        Group group = PermissionManager.getGroup(groupName);
 
-        if (group.removePerm(strings[0]))
-            notifyOperators(sender, this, String.format("Removed command %s from %s", strings[0], strings[1]));
-        else
-            throw new PlayerNotFoundException("That group didn't have that perm");
+        if (group == null) {
+            throw new PlayerNotFoundException("Group: " + groupName + " doesn't exist");
+        }
+
+        if (group.removePerm(perm)) {
+            notifyOperators(sender, this, String.format("Removed perm: %s From group: %s", perm, groupName));
+        } else {
+            throw new CommandException(String.format("Group: %s didn't have perm: %s", groupName, perm));
+        }
     }
 }

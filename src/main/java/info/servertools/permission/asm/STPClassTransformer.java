@@ -22,6 +22,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
+import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.MethodNode;
 
@@ -42,6 +43,10 @@ public class STPClassTransformer implements IClassTransformer {
         chPatch.addMethodToPatch(new MethodNote("getPossibleCommands", "func_71558_b", "(Lnet/minecraft/command/ICommandSender;Ljava/lang/String;)Ljava/util/List;"));
         chPatch.addMethodToPatch(new MethodNote("getPossibleCommands", "func_71557_a", "(Lnet/minecraft/command/ICommandSender;)Ljava/util/List;"));
         addPatch(chPatch);
+
+        PatchNote playerPatch = new PatchNote("net.minecraft.entity.player.EntityPlayerMP", "info.servertools.permission.STPEntityPlayer");
+        playerPatch.addMethodToPatch(new MethodNote("canCommandSenderUseCommand", "func_70003_b", "(ILjava/lang/String;)Z"));
+        addPatch(playerPatch);
     }
 
 
@@ -65,9 +70,9 @@ public class STPClassTransformer implements IClassTransformer {
 
     private static byte[] transform(String obfName, PatchNote patchNote, byte[] bytes) {
 
-        ClassNode classNode = new ClassNode();
+        ClassNode classNode = new ClassNode(Opcodes.ASM5);
         ClassReader classReader = new ClassReader(bytes);
-        classReader.accept(classNode, 0);
+        classReader.accept(classNode, ClassReader.EXPAND_FRAMES);
 
         if (patchNote.methodsToPatch.isEmpty())
             return bytes;
@@ -119,7 +124,7 @@ public class STPClassTransformer implements IClassTransformer {
             }
         }
 
-        ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_MAXS);
+        ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_FRAMES);
         classNode.accept(classWriter);
         return classWriter.toByteArray();
     }

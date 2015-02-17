@@ -22,6 +22,7 @@ import info.servertools.permission.Reference;
 
 import java.util.Map;
 
+@IFMLLoadingPlugin.SortingIndex(Integer.MAX_VALUE)
 @IFMLLoadingPlugin.MCVersion(Reference.MC_VERSION)
 @IFMLLoadingPlugin.TransformerExclusions({"matthewprenger.servertools.permission.asm"})
 public class STPPlugin implements IFMLLoadingPlugin, IFMLCallHook {
