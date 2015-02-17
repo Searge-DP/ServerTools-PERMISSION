@@ -21,11 +21,13 @@ import info.servertools.permission.Group;
 import info.servertools.permission.PermissionManager;
 
 import net.minecraft.command.CommandHandler;
+import net.minecraft.command.ICommand;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.PlayerNotFoundException;
 import net.minecraft.command.WrongUsageException;
 import net.minecraft.server.MinecraftServer;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -40,12 +42,17 @@ public class CommandAddPerm extends ServerToolsCommand {
         return CommandLevel.OP;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public List addTabCompletionOptions(ICommandSender sender, String[] strings) {
 
         if (strings.length == 1) {
             CommandHandler ch = (CommandHandler) MinecraftServer.getServer().getCommandManager();
-            return ch.getPossibleCommands(sender, strings[0]);
+            List<String> ret = new ArrayList<>(ch.getCommands().size());
+            for (ICommand command : (Collection<ICommand>) ch.getCommands().values()) {
+                ret.add("cmd." + command.getCommandName());
+            }
+            return getListOfStringsFromIterableMatchingLastWord(strings, ret);
         } else if (strings.length == 2) {
             Collection<String> groupKeys = PermissionManager.getGroupNames();
             return getListOfStringsMatchingLastWord(strings, groupKeys.toArray(new String[groupKeys.size()]));
@@ -57,7 +64,6 @@ public class CommandAddPerm extends ServerToolsCommand {
 
     @Override
     public String getCommandUsage(ICommandSender sender) {
-
         return "/" + name + " [perm] [groupname]";
     }
 
